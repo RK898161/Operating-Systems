@@ -1,3 +1,5 @@
 a.out
 .gdb_history
 peda-session*
+.ipynb_checkpoints
+._*
