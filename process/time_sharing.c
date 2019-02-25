@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
 
   if (pid < 0) {
     printf("Fork failed\n");
-  } 
+  }
   else if (pid == 0) {
     child();
   }
