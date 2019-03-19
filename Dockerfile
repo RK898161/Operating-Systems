@@ -23,6 +23,8 @@ RUN apt-get update --fix-missing && \
 
 RUN apt-get install -y nano
 
+RUN apt-get install -y openjdk-8-sdk
+
 USER student
 ENV PATH "/bin:/usr/bin:$PATH"
 WORKDIR "/home/student"
