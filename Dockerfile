@@ -24,7 +24,12 @@ RUN apt-get update --fix-missing && \
 RUN apt-get install -y nano
 
 RUN apt-get install -y openjdk-8-sdk
-
+RUN apt-get install -y qemu && \
+    git clone https://github.com/linhbngo/xv6-public.git /home/student/xv6 && \
+    echo "add-auto-load-safe-path /home/student/xv6/.gdbinit" >> /home/student/.gdbinit && \
+    chown -R student /home/student/xv6 && \
+    chown -R student /home/student/.gdbinit
+    
 USER student
 ENV PATH "/bin:/usr/bin:$PATH"
 WORKDIR "/home/student"
