@@ -29,3 +29,4 @@ USER student
 ENV PATH "/bin:/usr/bin:$PATH"
 WORKDIR "/home/student"
 CMD ["/bin/bash"]
+# test
