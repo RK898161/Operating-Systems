@@ -28,7 +28,9 @@ RUN apt-get install -y qemu && \
     chown -R student /home/student/xv6 && \
     chown -R student /home/student/.gdbinit
 
-USER student
+RUN 
+
+USER root
 ENV PATH "/bin:/usr/bin:$PATH"
 WORKDIR "/home/student"
 CMD ["/bin/bash"]
