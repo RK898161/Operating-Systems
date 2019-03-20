@@ -15,11 +15,7 @@ RUN apt-get update --fix-missing && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     chown -R student /opt && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> /home/student/.bashrc && \
-    echo "conda activate base" >> /home/student/.bashrc && \
-    git clone https://github.com/longld/peda.git /home/student/peda && \
-    chown -R student /home/student/peda && \
-    echo "source ~/peda/peda.py" >> /home/student/.gdbinit && \
-    chown -R student /home/student/.gdbinit
+    echo "conda activate base" >> /home/student/.bashrc
 
 RUN apt-get install -y nano
 
@@ -32,7 +28,7 @@ RUN apt-get install -y qemu && \
     chown -R student /home/student/xv6 && \
     chown -R student /home/student/.gdbinit
 
-USER student
+USER root
 ENV PATH "/bin:/usr/bin:$PATH"
 WORKDIR "/home/student"
 CMD ["/bin/bash"]
