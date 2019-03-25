@@ -6,13 +6,14 @@ int num_threads;
 double *A, *B, *C;
 int dimension;
 
-void matrix_mul(int slice);
+void *matrix_mul(void *slice);
 
 int main(int argc, char *argv[]) {
-  int i, j, k;
+  int i, j;
+  int *k;
   double start, end;
   pthread_t *threads;
-  int num_threads = atoi(argv[1);
+  int num_threads = atoi(argv[1]);
 
   dimension = atoi(argv[2]);
   A = (double*)malloc(dimension*dimension*sizeof(double));
@@ -27,15 +28,17 @@ int main(int argc, char *argv[]) {
       C[dimension*i+j] = 0.0;
     }
 
-  thread = (pthread_t *) malloc(num_threads * sizeof(pthread_t));
+  threads= (pthread_t *) malloc(num_threads * sizeof(pthread_t));
 
   /* if num_threads == 1, the main process is the sole thread,
    * therefore we do not enter this loop.
    */
   for (i = 1; i < num_threads; i++) {
-    if (pthread_create (&thread[i], NULL, matrix_mul, (int *)i) != 0 ) {
+    k = malloc(sizeof(* k));
+    *k = i;
+    if (pthread_create (&threads[i], NULL, matrix_mul, k) != 0 ) {
       perror("Can't create thread");
-      free(thread);
+      free(threads);
       exit(-1);
     }
   }
@@ -46,7 +49,7 @@ int main(int argc, char *argv[]) {
 
   // main thead waiting for other thread to complete
   for (i = 1; i < num_threads; i++)
-    pthread_join (thread[i], NULL);
+    pthread_join (threads[i], NULL);
 
   free(A);
   free(B);
@@ -54,13 +57,15 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void matrix_mul(int *slice) {
-  int start = ((int)(slice) * dimension)/num_threads; // note that this 'slicing' works fine
-  int end = (((int)(slice) + 1) * SIZE)/num_threads; // even if SIZE is not divisible by num_thrd
+void *matrix_mul(void *slice) {
+  int s = * (int *) slice;
+  int start = (s * dimension)/num_threads; // note that this 'slicing' works fine
+  int end = ((s + 1) * dimension)/num_threads; // even if SIZE is not divisible by num_thrd
   int i, j, k;
 
-  for(i = from; i < to; i++)
+  for(i = start; i < end; i++)
     for(j = 0; j < dimension; j++)
       for(k = 0; k < dimension; k++)
         C[dimension*i+j] += A[dimension*i+k] * B[dimension*k+j];
+  return 0;
 }
