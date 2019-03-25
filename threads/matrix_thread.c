@@ -7,6 +7,7 @@ double *A, *B, *C;
 int dimension;
 
 void *matrix_mul(void *slice);
+void print_matrix(double *matrix, int dimension);
 
 int main(int argc, char *argv[]) {
   int i, j;
@@ -43,6 +44,14 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < num_threads; i++)
     pthread_join (threads[i], NULL);
 
+  if (dimension < 10) {
+    printf("A ======================\n");
+    print_matrix(A, dimension);
+    printf("B ======================\n");
+    print_matrix(B, dimension);
+    printf("C ======================\n");    
+    print_matrix(C, dimension);
+  }
   free(A);
   free(B);
   free(C);
@@ -61,4 +70,15 @@ void *matrix_mul(void *slice) {
       for(k = 0; k < dimension; k++)
         C[dimension*i+j] += A[dimension*i+k] * B[dimension*k+j];
   return 0;
+}
+
+void print_matrix(double *matrix, int dimension) {
+  int i, j;
+  for (i = 0; i < dimension; ++i) {
+    for (j = 0; j < dimension - 1; ++j) {
+      printf("%lf, ", matrix[dimension * i + j]);
+    }
+    printf("%lf", matrix[dimension * i + j]);
+    putchar('\n');
+  }
 }
