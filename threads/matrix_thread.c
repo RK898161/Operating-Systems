@@ -11,11 +11,10 @@ void *matrix_mul(void *slice);
 int main(int argc, char *argv[]) {
   int i, j;
   int *k;
-  double start, end;
   pthread_t *threads;
-  int num_threads = atoi(argv[1]);
-
+  num_threads = atoi(argv[1]);
   dimension = atoi(argv[2]);
+
   A = (double*)malloc(dimension*dimension*sizeof(double));
   B = (double*)malloc(dimension*dimension*sizeof(double));
   C = (double*)malloc(dimension*dimension*sizeof(double));
@@ -30,11 +29,8 @@ int main(int argc, char *argv[]) {
 
   threads= (pthread_t *) malloc(num_threads * sizeof(pthread_t));
 
-  /* if num_threads == 1, the main process is the sole thread,
-   * therefore we do not enter this loop.
-   */
-  for (i = 1; i < num_threads; i++) {
-    k = malloc(sizeof(* k));
+  for (i = 0; i < num_threads; i++) {
+    k = malloc(sizeof(int));
     *k = i;
     if (pthread_create (&threads[i], NULL, matrix_mul, k) != 0 ) {
       perror("Can't create thread");
@@ -43,12 +39,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  /* the main program can also perform one portion of the tasks (one slice)
-  */
-  matrix_mul(0);
-
   // main thead waiting for other thread to complete
-  for (i = 1; i < num_threads; i++)
+  for (i = 0; i < num_threads; i++)
     pthread_join (threads[i], NULL);
 
   free(A);
@@ -58,9 +50,10 @@ int main(int argc, char *argv[]) {
 }
 
 void *matrix_mul(void *slice) {
-  int s = * (int *) slice;
+  int s = *((int *) slice);
   int start = (s * dimension)/num_threads; // note that this 'slicing' works fine
-  int end = ((s + 1) * dimension)/num_threads; // even if SIZE is not divisible by num_thrd
+  int end = ((s + 1) * dimension)/num_threads; // even if SIZE is not divisible by num_threads
+  printf("Thread %d with starting row %d and ending row %d\n", s, start, end);
   int i, j, k;
 
   for(i = start; i < end; i++)
